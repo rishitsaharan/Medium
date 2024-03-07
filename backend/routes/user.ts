@@ -42,7 +42,9 @@ userApiRouter.post("/signin", async (c) => {
 userApiRouter.post("/signup", async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
+    }).$extends(withAccelerate());
+
+    
     const body = await c.req.json();
     try{
         const user = await prisma.user.create({
