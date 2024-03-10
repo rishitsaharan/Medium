@@ -6,6 +6,7 @@
   "dependencies": {
     "@prisma/client": "^5.10.2",
     "@prisma/extension-accelerate": "^1.0.0",
+    "@rishit.saharan/medium-common": "^1.0.0",
     "@types/pg": "^8.11.2",
     "argon2": "^0.40.1",
     "dotenv": "^16.4.5",

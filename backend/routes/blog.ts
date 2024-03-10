@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import { blogContent, blogUpdate } from '@rishit.saharan/medium-common';
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 
@@ -39,6 +40,12 @@ blogApiRouter.get("/", (c) => {
 })
 blogApiRouter.post("/", async (c) => {
     const body = await c.req.json();
+    const {success} = blogContent.safeParse(body);
+    if(!success){
+        c.status(403);
+        return c.text("Invalid format for Blog");
+    }
+
     const UserId = c.get("UserId");
     const prisma = c.get("Prisma");
     const blog = await prisma.blog.create({
@@ -55,6 +62,11 @@ blogApiRouter.post("/", async (c) => {
 });
 blogApiRouter.put("/", async (c) => {
     const body = await c.req.json();
+    const {success} = blogUpdate.safeParse(body);
+    if(!success){
+        c.status(403);
+        return c.text("Invalid format for Blog Update");
+    }
     const blogId = parseInt(body.blogId);
     const UserId = c.get("UserId");
     const prisma = new PrismaClient({

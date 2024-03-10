@@ -3,6 +3,7 @@ import { decode, sign, verify } from "hono/jwt";
 import { z } from "zod";
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import { signInInput, signUpInput } from "@rishit.saharan/medium-common"; 
 
 export const userApiRouter = new Hono<{
     Bindings: {
@@ -20,6 +21,11 @@ userApiRouter.post("/signin", async (c) => {
     }).$extends(withAccelerate());
 
     const body = await c.req.json();
+    const {success} = signInInput.safeParse(body);
+    if(!success){
+        c.status(403);
+        return c.json("Invalid Format while Signing In");
+    }
     const userExists = await prisma.user.findFirst({
         where : {
             username : body.username,
@@ -44,8 +50,12 @@ userApiRouter.post("/signup", async (c) => {
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
 
-    
     const body = await c.req.json();
+    const {success} = signUpInput.safeParse(body);
+    if(!success){
+        c.status(403);
+        return c.json("Invalid Format while Signing Up");
+    }
     try{
         const user = await prisma.user.create({
             data: {
@@ -55,7 +65,10 @@ userApiRouter.post("/signup", async (c) => {
             }
           });
         const token = await sign({id : user.id}, c.env.JWT_SECRET);
-        return c.text(token);
+        return c.json({
+            message : "Signed Up",
+            token : token
+        });
     }
     catch(err){
         return c.status(411);
