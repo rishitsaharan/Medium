@@ -12428,7 +12428,7 @@ blogApiRouter.use("*", async (c, next) => {
     datasourceUrl: c.env.DATABASE_URL
   }).$extends(withAccelerate());
   c.set("Prisma", prisma);
-  const jwtToken = await c.req.header("Authorization");
+  const jwtToken = c.req.header("Authorization");
   if (!jwtToken) {
     c.status(411);
     return c.text("No Auth Token");
@@ -12490,11 +12490,17 @@ blogApiRouter.put("/", async (c) => {
   return c.json(updatedBlog);
 });
 blogApiRouter.get("/bulk", async (c) => {
-  const UserId = c.get("UserId");
   const prisma = c.get("Prisma");
   const blogs = await prisma.blog.findMany({
-    where: {
-      authorId: UserId
+    select: {
+      title: true,
+      content: true,
+      id: true,
+      author: {
+        select: {
+          name: true
+        }
+      }
     }
   });
   return c.json(blogs);

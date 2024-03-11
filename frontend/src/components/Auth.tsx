@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpInputType } from "@rishit.saharan/medium-common";
 import { BACKEND_URL } from "../config";
