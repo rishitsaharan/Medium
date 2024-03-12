@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { blogContent, blogUpdate } from '@rishit.saharan/medium-common';
 import { Hono } from "hono";
-import { verify } from "hono/jwt";
+import { jwt, verify } from "hono/jwt";
 
 const blogApiRouter = new Hono<{
     Bindings: {
@@ -25,14 +25,18 @@ blogApiRouter.use("*", async (c, next) => {
         c.status(411);
         return c.text("No Auth Token");
     }
-    
-    const token = jwtToken.split(" ")[1];
-    const payload = await verify(token, c.env.JWT_SECRET);
-    if(!payload){
+    try{
+        const token = jwtToken.split(" ")[1];
+        const payload = await verify(token, c.env.JWT_SECRET);
+        if(!payload){
+            c.status(411);
+            return c.text("Incorrect Auth Token");
+        }
+        c.set("UserId", payload.id);
+    }catch(err){
         c.status(411);
-        return c.text("Incorrect Auth Token");
+        return c.text("No Auth Token");
     }
-    c.set("UserId", payload.id);
     await next();
 });
 blogApiRouter.get("/", (c) => {

@@ -35,6 +35,7 @@ export const useBlog = ({ id }: { id: string }) => {
 export const useBlogs = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [blogs, setBlogs] = useState<BlogInterface[]>([]);
+    const [tokenExists, setTokenExists] = useState(true);
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
@@ -44,10 +45,13 @@ export const useBlogs = () => {
         }).then(response => {
             setBlogs(response.data);
             setIsLoading(false);
+        }).catch(response => {
+            setTokenExists(false);
         })
     }, []);
     return {
         isLoading,
-        blogs
+        blogs,
+        tokenExists
     }
 };

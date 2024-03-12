@@ -14,7 +14,6 @@ export const Auth = ({type} : {type : "signup" | "signin"}) => {
     async function sendRequest(){
         try{
             const url = `${BACKEND_URL}/api/v1/user/${type}`;
-            console.log(url);
             const response = await axios.post(url, postInputs);
             localStorage.setItem("token", response.data.token);
             navigate("/blogs");

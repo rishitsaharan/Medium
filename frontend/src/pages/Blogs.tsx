@@ -1,21 +1,31 @@
 import { BlogCard } from "../components/BlogCard";
 import { AppBar } from "../components/AppBar";
 import { useBlogs } from "../hooks";
+import { BlogSkeleton } from "../components/BlogSkeleton";
+import { useNavigate } from "react-router-dom";
 
 export const Blogs =() => {
-    const {isLoading, blogs} = useBlogs();
-    return <div className="flex flex-col justify-center p-4">
+    const {isLoading, blogs, tokenExists} = useBlogs();
+    const navigate = useNavigate();
+
+    if(!tokenExists){
+        alert("Signin Failed");
+        navigate("/signin");
+        return <div></div>
+    }
+    return <div className="flex flex-col justify-center">
         <div>
             <AppBar 
                 author="Rishit"
             />
         </div>
-        {isLoading ? <div>
-            Loading...
-        
+        {isLoading ? <div className="flex justify-center">
+            <div className="">
+                <BlogSkeleton />
+                <BlogSkeleton />
+                <BlogSkeleton />
+            </div>
         </div> 
-        
-        
         :   <div className="flex justify-center">
                 <div className="">
                     {blogs.map((blog) => <BlogCard 
