@@ -45,7 +45,7 @@ export const useBlogs = () => {
         }).then(response => {
             setBlogs(response.data);
             setIsLoading(false);
-        }).catch(response => {
+        }).catch(() => {
             setTokenExists(false);
         })
     }, []);
